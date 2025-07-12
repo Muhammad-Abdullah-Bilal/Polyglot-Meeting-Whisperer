@@ -26,7 +26,6 @@ A beautiful, modern React application for real-time meeting transcription and tr
 polyglot-meeting-whisperer/
 ├── public/
 │   ├── index.html
-│   └── favicon.ico
 ├── src/
 │   ├── components/
 │   │   ├── Dashboard.js
