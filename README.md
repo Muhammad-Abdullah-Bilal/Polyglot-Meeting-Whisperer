@@ -179,4 +179,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] User authentication and session management
 - [ ] Cloud storage for transcripts
 - [ ] Advanced analytics and reporting
+<<<<<<< HEAD
 ```
+=======
+```
+>>>>>>> c241bbbf0afc6ee938803974dedef1f40472cdae
