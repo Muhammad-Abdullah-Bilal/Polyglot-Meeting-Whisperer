@@ -104,7 +104,6 @@ A beautiful, modern React application for real-time meeting transcription and tr
 polyglot-meeting-whisperer/
 ├── public/
 │   ├── index.html
-│   └── favicon.ico
 ├── src/
 │   ├── components/
 │   │   ├── Dashboard.js
@@ -259,3 +258,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Advanced analytics and reporting
 ```
 
+<<<<<<< HEAD
+=======
+---
+>>>>>>> d79f1cbb02eac971444ee2890b1afd38e39b163f
