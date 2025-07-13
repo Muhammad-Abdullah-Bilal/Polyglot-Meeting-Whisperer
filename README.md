@@ -257,8 +257,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Cloud storage for transcripts
 - [ ] Advanced analytics and reporting
 ```
-
-<<<<<<< HEAD
-=======
----
->>>>>>> d79f1cbb02eac971444ee2890b1afd38e39b163f
