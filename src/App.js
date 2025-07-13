@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Dashboard from './components/Dashboard';
+import Header from './components/Header';
+import ControlButtons from './components/ControlButtons';
+import StatsPanel from './components/StatsPanel';
 import TranscriptCard from './components/TranscriptCard';
 import SettingsModal from './components/SettingsModal';
-import ControlButtons from './components/ControlButtons';
+import AgentCard from './components/AgentCard';
 import useAudioRecording from './hooks/useAudioRecording';
-import { translate } from './utils/translator';
+import { translate, getLanguageOptions } from './utils/translator';
 import './App.css';
 
 const App = () => {
@@ -29,7 +31,6 @@ const App = () => {
     onSessionStart: () => setSessionStart(Date.now())
   });
 
-  // Timer effect
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -57,16 +58,7 @@ const App = () => {
   };
 
   const handleExport = () => {
-    const data = {
-      session: {
-        duration: sessionDuration,
-        timestamp: new Date().toISOString(),
-        summary
-      },
-      original: transcript,
-      translated: translatedTranscript
-    };
-    
+    const data = { session: { duration: sessionDuration, timestamp: new Date().toISOString(), summary }, original: transcript, translated: translatedTranscript };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -78,79 +70,62 @@ const App = () => {
     URL.revokeObjectURL(url);
   };
 
-  const languageOptions = [
-    { code: 'english', name: 'English', flag: '🇺🇸' },
-    { code: 'spanish', name: 'Spanish', flag: '🇪🇸' },
-    { code: 'french', name: 'French', flag: '🇫🇷' },
-    { code: 'german', name: 'German', flag: '🇩🇪' },
-    { code: 'chinese', name: 'Chinese', flag: '🇨🇳' },
+  const languageOptions = getLanguageOptions();
+
+  const agents = [
+    { icon: '🎤', title: 'Audio Input Listener', description: 'Captures and processes live audio input from meetings and conferences with advanced noise filtering', status: 'Ready' },
+    { icon: '📝', title: 'Transcriber Agent', description: 'Real-time speech-to-text using advanced recognition models (Groq/Whisper) with speaker identification', status: 'Ready' },
+    { icon: '🌍', title: 'Translator Agent', description: 'Live translation into multiple languages with contextual understanding and cultural nuances', status: 'Ready' },
+    { icon: '❓', title: 'Question Generator Agent', description: 'Generates relevant follow-up questions based on ongoing conversation to enhance engagement', status: 'Ready' },
+    { icon: '📋', title: 'Summarizer Agent', description: 'Continuously produces concise summaries of meeting content with key points and action items', status: 'Ready' },
+    { icon: '🏷', title: 'Topic Extractor Agent', description: 'Identifies and extracts major topics being discussed in real-time for categorization', status: 'Ready' },
+    { icon: '💡', title: 'Keyword Explanation Agent', description: 'Detects technical terms and provides brief explanations and definitions for better understanding', status: 'Ready' },
+    { icon: '🎯', title: 'Output Orchestrator', description: 'Coordinates and manages all agent outputs for seamless user experience and data flow', status: 'Ready' },
   ];
 
   return (
     <div className="min-h-screen purple-gradient">
       <div className="container mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="glass-card p-4 mb-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center">
-                <span className="text-white text-lg">🌐</span>
-              </div>
-              <div>
-                <h1 className="text-white text-xl font-semibold">Polyglot Meeting Whisperer</h1>
-              </div>
-            </div>
-            <div className="text-white/80 text-sm">
-              {currentTime.toLocaleTimeString()}
-            </div>
-          </div>
-        </div>
-
-        {/* Control Buttons */}
+        <Header currentTime={currentTime} />
         <ControlButtons
           isRecording={isRecording}
-          onToggleRecording={toggleRecording}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          onReset={resetTranscript}
-          onExport={handleExport}
+          toggleRecording={toggleRecording}
+          openSettings={() => setIsSettingsOpen(true)}
+          resetTranscript={resetTranscript}
+          exportData={handleExport}
         />
-
-        {/* Dashboard */}
-        <Dashboard 
-          wordCount={summary.wordCount} 
-          speakerCount={summary.speakers} 
+        <StatsPanel
+          wordCount={summary.wordCount}
+          speakerCount={summary.speakers}
           avgWords={summary.avgWords}
           sessionDuration={sessionDuration}
         />
-
-        {/* Transcript Cards */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6 mb-6">
           <TranscriptCard
             title="Original Transcript"
-            emoji="📝"
-            gradient="from-orange-400 to-pink-400"
+            icon="📝"
             transcript={transcript}
             isLoading={isLoading}
-            selectedLang={selectedOriginalLang}
-            onLangChange={setSelectedOriginalLang}
             languageOptions={languageOptions}
-            emptyMessage="No transcript yet. Start recording to begin transcription!"
+            selectedLanguage={selectedOriginalLang}
+            onLanguageChange={setSelectedOriginalLang}
+            showAutoDetect={true}
           />
-
           <TranscriptCard
-            title="Translated (EN)"
-            emoji="🌍"
-            gradient="from-blue-400 to-purple-400"
+            title="Translated Output"
+            icon="🌐"
             transcript={translatedTranscript}
             isLoading={isLoading}
-            selectedLang={selectedTranslatedLang}
-            onLangChange={setSelectedTranslatedLang}
             languageOptions={languageOptions}
-            emptyMessage="No translated transcript yet. Start recording to begin translation!"
+            selectedLanguage={selectedTranslatedLang}
+            onLanguageChange={setSelectedTranslatedLang}
           />
         </div>
-
-        {/* Settings Modal */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {agents.map((agent, index) => (
+            <AgentCard key={index} {...agent} />
+          ))}
+        </div>
         <SettingsModal
           isOpen={isSettingsOpen}
           onClose={() => setIsSettingsOpen(false)}
@@ -163,4 +138,3 @@ const App = () => {
 };
 
 export default App;
-
